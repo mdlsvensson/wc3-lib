@@ -125,7 +125,7 @@ The system owns its port: `missiles.dispose()` also releases the port's reusable
 
 ## Guides
 
-[Patterns](docs/patterns.md) · [core](docs/core.md) · [buffs](docs/buffs.md) · [dummy](docs/dummy.md) · [damage](docs/damage.md) · [physics](docs/physics.md) · [persistence and time](docs/persistence-time.md) · [natives cheat sheet](docs/natives.md). Rules for contributors (human or AI): [AGENTS.md](AGENTS.md).
+[Patterns](docs/patterns.md) · [testing](docs/testing.md) · [core](docs/core.md) · [buffs](docs/buffs.md) · [dummy](docs/dummy.md) · [damage](docs/damage.md) · [physics](docs/physics.md) · [persistence and time](docs/persistence-time.md) · [natives cheat sheet](docs/natives.md). Rules for contributors (human or AI): [AGENTS.md](AGENTS.md).
 
 ## Developing
 

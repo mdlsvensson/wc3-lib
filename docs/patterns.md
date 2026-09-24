@@ -29,7 +29,7 @@ WarcraftDamagePort         the ONLY place with natives (BlzSetEventDamage, UnitD
 | Local files | `PreloadLocalStore` | `PreloadPort` | `createWarcraftPreloadPort` |
 | Sync | `WarcraftSyncTransport` | `WarcraftSyncPort` | `createWarcraftSyncPort` |
 
-**Why:** the pure part can be tested in milliseconds with fake ports (see `tests/`). The adapter is small enough to check by eye. Porting to another Warcraft version or a different w3ts only touches the adapter.
+**Why:** the pure part can be tested in milliseconds with fake ports (see [testing.md](testing.md)). The adapter is small enough to check by eye. Porting to another Warcraft version or a different w3ts only touches the adapter.
 
 ## 3. Ownership and idempotent dispose
 
