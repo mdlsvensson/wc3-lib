@@ -1,0 +1,91 @@
+{
+  "name": "@mdlsvensson/wc3-lib",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": {
+    "./core": "./core/index.ts",
+    "./buffs": "./buffs/index.ts",
+    "./dummy": "./dummy/index.ts",
+    "./damage": "./damage/index.ts",
+    "./physics": "./physics/index.ts",
+    "./persistence": "./persistence/index.ts",
+    "./time": "./time/index.ts",
+    "./core/scheduler": "./core/scheduler.ts",
+    "./core/scope": "./core/scope.ts",
+    "./core/signal": "./core/signal.ts",
+    "./core/warcraft-clock": "./core/warcraft-clock.ts",
+    "./buffs/aura": "./buffs/aura.ts",
+    "./buffs/buffs": "./buffs/buffs.ts",
+    "./buffs/warcraft-buffs": "./buffs/warcraft-buffs.ts",
+    "./dummy/dummy": "./dummy/dummy.ts",
+    "./dummy/warcraft-dummy": "./dummy/warcraft-dummy.ts",
+    "./damage/system": "./damage/system.ts",
+    "./damage/warcraft": "./damage/warcraft.ts",
+    "./physics/geometry": "./physics/geometry.ts",
+    "./physics/knockback": "./physics/knockback.ts",
+    "./physics/missile": "./physics/missile.ts",
+    "./physics/warcraft": "./physics/warcraft.ts",
+    "./persistence/codec": "./persistence/codec.ts",
+    "./persistence/format": "./persistence/format.ts",
+    "./persistence/local-file": "./persistence/local-file.ts",
+    "./persistence/sync": "./persistence/sync.ts",
+    "./time/warcraft": "./time/warcraft.ts"
+  },
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "strict": true,
+    "types": [
+      "./node_modules/war3-types-strict/1.33.0.d.ts"
+    ],
+    "lib": [
+      "deno.window",
+      "esnext"
+    ]
+  },
+  "tasks": {
+    "test": "deno test -A tests/",
+    "typecheck": "deno check core buffs dummy damage physics persistence time tests tools/lua.ts && deno run -A npm:typescript@5.8.2/tsc --noEmit -p tsconfig.json",
+    "lint": "deno lint",
+    "build:testbed": "deno run -A tools/lua.ts build-testbed",
+    "test:lua": "deno run -A tools/lua.ts test",
+    "publish:dry": "deno publish --dry-run --allow-slow-types"
+  },
+  "lint": {
+    "plugins": [
+      "./lint/wcraft-rules.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "dist"
+    ],
+    "rules": {
+      "tags": [
+        "recommended"
+      ],
+      "include": [
+        "no-eval",
+        "no-throw-literal",
+        "no-sparse-arrays",
+        "no-sync-fn-in-async-fn"
+      ]
+    }
+  },
+  "fmt": {
+    "exclude": [
+      "node_modules",
+      "dist"
+    ]
+  },
+  "publish": {
+    "exclude": [
+      "tests/",
+      "tools/",
+      "lint/",
+      "dist/",
+      "package.json",
+      "tsconfig.json",
+      ".gitignore",
+      "deno.lock"
+    ]
+  }
+}

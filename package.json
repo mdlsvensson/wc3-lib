@@ -1,0 +1,19 @@
+{
+  "name": "wc3-lib-dev",
+  "private": true,
+  "description": "Dev-only npm dependencies (TypeScriptToLua toolchain and the fengari Lua VM) for building the testbed and running the Lua checks. The package itself is published to JSR from deno.json.",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-to-lua/language-extensions": "1.19.0",
+    "fengari": "0.1.4",
+    "lua-types": "2.14.1",
+    "typescript": "5.8.2",
+    "typescript-to-lua": "1.31.0",
+    "w3ts": "3.0.2",
+    "war3-transformer": "3.0.10",
+    "war3-types-strict": "0.1.3"
+  },
+  "engines": {
+    "deno": ">=2.9.6 <3"
+  }
+}
