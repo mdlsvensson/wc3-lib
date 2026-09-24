@@ -1,6 +1,6 @@
 {
   "name": "@mdlsvensson/wc3-lib",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "exports": {
     "./core": "./core/index.ts",
