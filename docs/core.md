@@ -1,6 +1,6 @@
 # Core: Scheduler, Scope, Signal, Warcraft clock
 
-Folder: `core/` (import as `@mdlsvensson/wc3-lib/core`, via its `index.ts`, or one file at a time, e.g. `@mdlsvensson/wc3-lib/core/scheduler`). Everything else is built on these files.
+Folder: `core/` (`@mdlsvensson/wc3-lib/core` gives the scheduler and the Warcraft clock; `Scope` and `Signal` are separate, opt-in imports: `@mdlsvensson/wc3-lib/core/scope`, `@mdlsvensson/wc3-lib/core/signal`). Everything else is built on these files.
 
 ## `scheduler.ts` — `Scheduler`
 

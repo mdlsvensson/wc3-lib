@@ -56,20 +56,20 @@ Read this whole file before changing anything. Sections 2–4 were carried over 
 A map that doesn't use a system must pay **0 bytes of script and 0 runtime** for it.
 
 1. **One entry point per optional feature.** An entry point pulls in only what that feature needs. Barrels are allowed only where every re-exported file is needed together.
-2. **Adapters are split per feature** (e.g. a knockback adapter and a missile adapter in separate files). Shared geometry stays in `geometry.ts`.
+2. **Adapters are split per feature**: `physics/knockback/warcraft.ts` and `physics/missile/warcraft.ts`, not one `physics/warcraft.ts`. Shared geometry stays in `geometry.ts`; the one shared native helper is `physics/warcraft-living.ts` (not exported).
 3. **Importing allocates nothing and registers nothing.** Only explicit `create…()`/`start()`/constructors do (invariant 2).
 4. **No global singletons and no auto-start.** The library never decides what runs. The map composes it (a `Scope` owns the pieces).
 5. **Core stays tiny.** `core/scheduler.ts` is the only dependency most systems share. `Scope` and `Signal` are opt-in.
 6. **Nothing `require`s a module by string.** Module names in the bundle come from file paths and change when files move.
 
-Pure cores (`damage/system.ts`, `physics/missile.ts`, …) stay importable on their own so maps can supply their own port.
+Pure cores (`damage/system.ts`, `physics/missile/system.ts`, …) stay importable on their own so maps can supply their own port.
 
-*Status:* rules 1 and 2 are not fully met yet: `physics/warcraft.ts` holds both physics adapters, and the barrels still re-export everything. That restructuring is migration phase 2.
+**Guards** (`tests/opt-in.test.ts`, part of `deno task test`): (a) for every export in `deno.json`, the exact set of modules it bundles, compiled with TSTL. Changing that table must be a deliberate decision about cost. (b) Every module is loaded in fengari with **every Warcraft native replaced by a function that throws**. Importing must not call any.
 
 ## 6. How to verify a change
 
 ```bash
-deno task test          # 77 tests, run as JavaScript (with type checking)
+deno task test          # 80 tests: 77 behaviour tests (as JavaScript) + 3 opt-in guards (TSTL + fengari)
 deno task typecheck     # deno check + tsc (modules, testbed, harness)
 deno task lint          # includes the three Lua rules
 deno task test:lua      # Lua harness + testbed dry run in fengari, both lualib modes

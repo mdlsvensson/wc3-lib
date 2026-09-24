@@ -1,4 +1,4 @@
-import { nonnegative, point2, positive, type Point2 } from "./geometry.ts";
+import { nonnegative, point2, positive, type Point2 } from "../geometry.ts";
 
 export interface KnockbackPort<T> {
   valid(target: T): boolean;

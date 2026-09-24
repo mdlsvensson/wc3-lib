@@ -21,15 +21,25 @@ interface TsConfig {
   tstl: Record<string, unknown>;
 }
 
-/** Compile one entry point to a single Lua bundle with the repo's tsconfig.json and the given lualib mode. */
-export function compile(entry: string, bundle: string, mode: LualibMode = "require"): void {
+/**
+ * Compile with the repo's tsconfig.json and the given lualib mode. With `bundle`, the single entry
+ * becomes one Lua bundle; without it, every entry (and what it imports) is written as one Lua file
+ * per module under `outDir`. Only the entries and what they import are compiled.
+ */
+export function compile(entries: string[], options: { bundle?: string; outDir?: string; mode?: LualibMode } = {}): void {
   const config: TsConfig = JSON.parse(Deno.readTextFileSync(path.join(ROOT, "tsconfig.json")));
-  config.compilerOptions.outDir = path.join(DIST, "out");
-  config.include = [entry]; // Only what the entry imports is bundled (anything listed in include is bundled too).
-  config.tstl.luaBundleEntry = "./" + entry;
-  config.tstl.luaBundle = bundle;
-  config.tstl.luaLibImport = mode;
-  const file = path.join(ROOT, `tsconfig.lua.${Deno.pid}.json`);
+  config.compilerOptions.outDir = options.outDir ?? path.join(DIST, "out");
+  config.include = entries; // Anything listed in include is compiled (and bundled) whether imported or not.
+  if (options.bundle !== undefined) {
+    if (entries.length !== 1) throw new Error("A bundle has exactly one entry");
+    config.tstl.luaBundleEntry = "./" + entries[0];
+    config.tstl.luaBundle = options.bundle;
+  } else {
+    delete config.tstl.luaBundleEntry;
+    delete config.tstl.luaBundle;
+  }
+  config.tstl.luaLibImport = options.mode ?? "require";
+  const file = path.join(ROOT, `tsconfig.lua.${Deno.pid}.${crypto.randomUUID()}.json`);
   Deno.writeTextFileSync(file, JSON.stringify(config, null, 2));
   let result: Deno.CommandOutput;
   try {
@@ -41,7 +51,12 @@ export function compile(entry: string, bundle: string, mode: LualibMode = "requi
   }
   Deno.removeSync(file);
   const output = new TextDecoder().decode(result.stdout) + new TextDecoder().decode(result.stderr);
-  if (!result.success) throw new Error(`TypeScriptToLua failed for ${entry}:\n${output}`);
+  if (!result.success) throw new Error(`TypeScriptToLua failed for ${entries.join(", ")}:\n${output}`);
+}
+
+/** The module names in a TSTL bundle, in bundle order (`["core.scheduler"] = function(...)`). */
+export function bundleModules(bundle: string): string[] {
+  return [...Deno.readTextFileSync(bundle).matchAll(/^\["([^"]+)"\] = function/gm)].map(m => m[1]);
 }
 
 /** Run Lua files in order in one fengari state. Returns everything printed and the first error, if any. */
@@ -82,7 +97,7 @@ function testMode(mode: LualibMode): string[] {
   Deno.mkdirSync(dir, { recursive: true });
 
   const harness = path.join(dir, "harness.lua");
-  compile("tools/lua-harness.ts", harness, mode);
+  compile(["tools/lua-harness.ts"], { bundle: harness, mode });
   const harnessRun = runLua([harness]);
   const summary = harnessRun.lines.find(line => /^\d+\/\d+ Lua checks passed$/.test(line));
   if (harnessRun.error) failures.push(`harness: ${harnessRun.error}`);
@@ -91,7 +106,7 @@ function testMode(mode: LualibMode): string[] {
   for (const line of harnessRun.lines.filter(l => l.startsWith("FAIL "))) failures.push(`harness: ${line}`);
 
   const testbed = path.join(dir, "testbed.lua");
-  compile("testbed/main.ts", testbed, mode);
+  compile(["testbed/main.ts"], { bundle: testbed, mode });
   const run = runLua([path.join(ROOT, "tools/testbed-stubs.lua"), testbed, path.join(ROOT, "tools/run-testbed.lua")]);
   Deno.writeTextFileSync(path.join(dir, "testbed-run.txt"), run.lines.join("\n") + "\n");
   if (run.error) failures.push(`testbed: ${run.error}`);
@@ -106,7 +121,7 @@ function testMode(mode: LualibMode): string[] {
 if (import.meta.main) {
   const command = Deno.args[0];
   if (command === "build-testbed") {
-    compile("testbed/main.ts", path.join(DIST, "testbed.lua"));
+    compile(["testbed/main.ts"], { bundle: path.join(DIST, "testbed.lua") });
     console.log("dist/testbed.lua");
   } else if (command === "test") {
     const failures = LUALIB_MODES.flatMap(testMode);

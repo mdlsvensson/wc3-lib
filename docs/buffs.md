@@ -1,6 +1,6 @@
 # Buffs and auras
 
-Folder: `buffs/`. These are **script buffs**: state that lives in TypeScript. They are *not* Warcraft's native ability buffs and don't show an icon in the unit's buff bar unless you add that yourself.
+Folder: `buffs/`. `@mdlsvensson/wc3-lib/buffs` gives `BuffStore` and `trackWarcraftBuffTargets`; auras are a separate import, `@mdlsvensson/wc3-lib/buffs/aura`. These are **script buffs**: state that lives in TypeScript. They are *not* Warcraft's native ability buffs and don't show an icon in the unit's buff bar unless you add that yourself.
 
 ## The two types: definition vs instance
 

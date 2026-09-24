@@ -1,12 +1,12 @@
 # Physics: missiles and knockback
 
-Folder: `physics/`. Written from scratch. ALICE was read for ideas only.
+Folder: `physics/`: `geometry.ts`, `knockback/` and `missile/` (each a pure `system.ts` plus a Warcraft `warcraft.ts`), and `warcraft-terrain.ts`. Import `@mdlsvensson/wc3-lib/physics/knockback` or `@mdlsvensson/wc3-lib/physics/missile` for a feature (system + adapter), `…/system` for the pure core only, and `@mdlsvensson/wc3-lib/physics/warcraft-terrain` for `WarcraftTerrain`. Written from scratch. ALICE was read for ideas only.
 
 ## `geometry.ts`
 
 Small maths helpers: `Point2`/`Point3` types, validation (`finite`, `positive`, `point3`, ...), `interpolate`, and **`segmentSphere(from, to, center, radius)`**. That last one answers: *"moving from A to B, how far along (0…1) do I first touch this sphere?"*. It's the heart of missile collision.
 
-## Missiles — `missile.ts`
+## Missiles — `missile/`
 
 ### Swept collision (why fast missiles don't pass through units)
 
@@ -72,7 +72,7 @@ Rules worth knowing:
 
 **Natives (`WarcraftMissilePort`, `WarcraftMissileVisual`, `WarcraftTerrain`):** `CreateGroup` (once per port), `GroupEnumUnitsInRange`, `FirstOfGroup`, `GroupRemoveUnit`, `GroupClear`, `DestroyGroup`, `BlzGetUnitCollisionSize`, `GetUnitX`/`GetUnitY`, `GetHandleId`, `GetUnitTypeId`, `GetWidgetLife`, `IsUnitType`, `AddSpecialEffect`, `BlzSetSpecialEffectPosition`, `DestroyEffect`, `Location`/`MoveLocation`/`GetLocationZ`/`RemoveLocation`.
 
-## Knockback — `knockback.ts`
+## Knockback — `knockback/`
 
 ```ts
 runtime.knockback.apply(unit, {

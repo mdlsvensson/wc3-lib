@@ -3,8 +3,8 @@
 import { Scheduler } from "@mdlsvensson/wc3-lib/core/scheduler";
 import { Scope } from "@mdlsvensson/wc3-lib/core/scope";
 import { BuffStore } from "@mdlsvensson/wc3-lib/buffs/buffs";
-import { MissileSystem, type CollisionTarget } from "@mdlsvensson/wc3-lib/physics/missile";
-import { KnockbackSystem, knockbackVelocity } from "@mdlsvensson/wc3-lib/physics/knockback";
+import { MissileSystem, type CollisionTarget } from "@mdlsvensson/wc3-lib/physics/missile/system";
+import { KnockbackSystem, knockbackVelocity } from "@mdlsvensson/wc3-lib/physics/knockback/system";
 import { turnToward } from "@mdlsvensson/wc3-lib/physics/geometry";
 import { SaveCodec } from "@mdlsvensson/wc3-lib/persistence/codec";
 import { integerText, hexDecode, hexEncode } from "@mdlsvensson/wc3-lib/persistence/format";

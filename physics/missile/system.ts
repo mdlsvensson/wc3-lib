@@ -1,4 +1,4 @@
-import { finite, interpolate, length3, nonnegative, point3, positive, segmentSphere, type Point3 } from "./geometry.ts";
+import { finite, interpolate, length3, nonnegative, point3, positive, segmentSphere, type Point3 } from "../geometry.ts";
 
 export interface CollisionTarget<T> {
   /** Stable unique identifier, also used to break simultaneous contact ties. */

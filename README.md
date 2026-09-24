@@ -9,7 +9,28 @@ import { KnockbackSystem } from "@mdlsvensson/wc3-lib/physics/knockback";
 import { Scheduler } from "@mdlsvensson/wc3-lib/core/scheduler";
 ```
 
-Every module is exported at its own path (`@mdlsvensson/wc3-lib/<folder>/<file>`), and each folder has an `index.ts` barrel (`@mdlsvensson/wc3-lib/damage`). A barrel pulls in everything it re-exports, so import single files when you want the smallest script. Inside the library, modules import each other relatively, with `.ts` extensions. Nothing here contains map rawcodes, coordinates or game rules; those come in as parameters.
+Inside the library, modules import each other relatively, with `.ts` extensions. Nothing here contains map rawcodes, coordinates or game rules; those come in as parameters.
+
+## Entry points
+
+One entry point per feature. Each pulls in only what that feature needs (enforced by `tests/opt-in.test.ts`), and every file is also importable on its own, so a map can use a pure core (`…/damage/system`, `…/physics/missile/system`) with its own port.
+
+| Import `@mdlsvensson/wc3-lib/…` | Gives you | Bundles |
+|---|---|---|
+| `core` | `Scheduler`, `startWarcraftClock` | scheduler, warcraft-clock |
+| `core/scope`, `core/signal` | `Scope`, `Signal` (opt-in) | that file |
+| `buffs` | `BuffStore`, `trackWarcraftBuffTargets` | buffs, warcraft-buffs |
+| `buffs/aura` | `Aura` (uses a `BuffStore` you pass in) | aura |
+| `dummy` | `DummyManager`, `createWarcraftDummies` | dummy, warcraft-dummy |
+| `damage` | `createWarcraftDamage`, `DamageSystem`, `isLethal` | system, warcraft |
+| `physics/knockback` | `KnockbackSystem`, `knockbackVelocity`, `WarcraftKnockbackPort` | geometry, knockback system + adapter |
+| `physics/missile` | `MissileSystem`, `WarcraftMissilePort`, `WarcraftMissileVisual` | geometry, missile system + adapter |
+| `physics/geometry`, `physics/warcraft-terrain` | `turnToward` and vector helpers; `WarcraftTerrain` | that file |
+| `persistence/codec`, `persistence/local-file`, `persistence/sync` | `SaveCodec`; `PreloadLocalStore`; `WarcraftSyncTransport` | format + that file |
+| `persistence/format` | `integerText`, `hexEncode`, … | format |
+| `time`, `time/warcraft` | calendar and formatting; `readWarcraftUtc` | time (+ warcraft) |
+
+There is no top-level barrel and no barrel that mixes optional features (no `physics`, no `persistence`).
 
 The TypeScript sources are what you consume: the map's TypeScriptToLua build compiles them, so only the files reachable from your imports end up in the map. How w3ts-framework brings them into a map is documented with the framework.
 
@@ -46,7 +67,7 @@ Deno tests run the library as JavaScript, so they cannot catch these. Two real b
 | `buffs/` | `BuffStore`, `Aura`, `trackWarcraftBuffTargets` | Script buffs: active, passive or aura; refresh/replace/stack/independent stacking; periodic `onTick`; `remaining`; `has`/`get`/`stacks`. Source-keyed, so two auras never cancel each other. |
 | `dummy/` | `DummyManager`, `createWarcraftDummies` | Leased, fresh dummy casters with timed cleanup and caster attribution (`sourceOf`). Caller supplies rawcode, ability and order. |
 | `damage/` | `createWarcraftDamage`, `DamageSystem`, `isLethal` | beforeArmor → afterArmor → observe pipeline, attack/damage/weapon type read and rewrite, script metadata, bounded queued script damage. |
-| `physics/` | `MissileSystem`, `KnockbackSystem`, `turnToward`, `knockbackVelocity`, `WarcraftMissilePort`, `WarcraftMissileVisual`, `WarcraftTerrain`, `WarcraftKnockbackPort` | Swept-sphere missiles (no tunnelling) with piercing, gravity arcs, homing and ground impact; knockback with optional deceleration and an explicit pathing policy. |
+| `physics/` (`knockback/`, `missile/`) | `MissileSystem`, `KnockbackSystem`, `turnToward`, `knockbackVelocity`, `WarcraftMissilePort`, `WarcraftMissileVisual`, `WarcraftTerrain`, `WarcraftKnockbackPort` | Swept-sphere missiles (no tunnelling) with piercing, gravity arcs, homing and ground impact; knockback with optional deceleration and an explicit pathing policy. |
 | `persistence/` | `SaveCodec`, `PreloadLocalStore`, `WarcraftSyncTransport` | Versioned, checksummed, optionally player-bound save codes; chunked local files; synced multiplayer import. |
 | `time/` | `utcToUnix`, `unixToUtc`, `formatDuration`, `formatUtc`, `dayOfWeek`, `SimulationTime`, `LocalWallTime`, `readWarcraftUtc` (time/warcraft) | Calendar maths and display, with simulation time kept separate from untrusted wall time. |
 

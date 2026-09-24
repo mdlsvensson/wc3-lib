@@ -1,6 +1,6 @@
 # Save/load, local files, sync, and time
 
-Folders: `persistence/`, `time/`.
+Folders: `persistence/`, `time/`. Persistence has no barrel: import `@mdlsvensson/wc3-lib/persistence/codec`, `…/local-file`, `…/sync` or `…/format` for what you use. Time: `@mdlsvensson/wc3-lib/time` (pure) and `@mdlsvensson/wc3-lib/time/warcraft` (`readWarcraftUtc`).
 
 ## Big picture
 

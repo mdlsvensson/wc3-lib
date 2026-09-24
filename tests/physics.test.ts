@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { MissileSystem, type CollisionTarget, type MissileEnd } from "../physics/missile.ts";
-import { KnockbackSystem, knockbackVelocity } from "../physics/knockback.ts";
+import { MissileSystem, type CollisionTarget, type MissileEnd } from "../physics/missile/system.ts";
+import { KnockbackSystem, knockbackVelocity } from "../physics/knockback/system.ts";
 import { turnToward } from "../physics/geometry.ts";
-import { WarcraftKnockbackPort, WarcraftMissilePort, WarcraftMissileVisual } from "../physics/warcraft.ts";
+import { WarcraftKnockbackPort } from "../physics/knockback/warcraft.ts";
+import { WarcraftMissilePort, WarcraftMissileVisual } from "../physics/missile/warcraft.ts";
 
 const p = (x = 0, y = 0, z = 0) => ({ x, y, z });
 const target = (id: number, x: number, y = 0, z = 0): CollisionTarget<number> =>

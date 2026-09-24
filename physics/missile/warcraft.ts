@@ -1,10 +1,6 @@
-import { nonnegative, point2, point3, positive, type Point2, type Point3 } from "./geometry.ts";
-import type { KnockbackPort } from "./knockback.ts";
-import type { CollisionTarget, MissilePort, MissileVisual } from "./missile.ts";
-
-function living(target: unit): boolean {
-  return GetUnitTypeId(target) !== 0 && GetWidgetLife(target) > 0.405 && !IsUnitType(target, UNIT_TYPE_DEAD);
-}
+import { nonnegative, point3, type Point3 } from "../geometry.ts";
+import { living } from "../warcraft-living.ts";
+import type { CollisionTarget, MissilePort, MissileVisual } from "./system.ts";
 
 export interface WarcraftMissileQueryOptions {
   /** Hard upper bound for every eligible target's radius; required for conservative enumeration. */
@@ -87,27 +83,6 @@ export class WarcraftMissilePort implements MissilePort<unit> {
   }
 }
 
-/**
- * Terrain height sampling through one owned location (GetLocationZ has no x/y variant).
- * Explicitly constructed; dispose() removes the location. Heights can differ between clients
- * under async terrain deformation, so avoid deformation effects where ground collision matters.
- */
-export class WarcraftTerrain {
-  private location?: location;
-  height(x: number, y: number): number {
-    if (this.location === undefined) {
-      // Cast: under `deno check` the DOM's Location class shadows the Warcraft Location() native.
-      this.location = (Location as unknown as (x: number, y: number) => location | undefined)(x, y);
-      if (this.location === undefined) throw new Error("Failed to create terrain sample location");
-    } else MoveLocation(this.location, x, y);
-    return GetLocationZ(this.location);
-  }
-  dispose(): void {
-    if (this.location !== undefined) RemoveLocation(this.location);
-    this.location = undefined;
-  }
-}
-
 /** Explicit construction creates one owned effect at absolute world height. */
 export class WarcraftMissileVisual implements MissileVisual {
   private effect?: effect;
@@ -131,44 +106,5 @@ export class WarcraftMissileVisual implements MissileVisual {
     const owned = this.effect;
     this.effect = undefined;
     DestroyEffect(owned);
-  }
-}
-
-export interface WarcraftKnockbackOptions {
-  /** Point sampling ignores footprints, units and destructibles. Custom policy may check those. */
-  pathing: "unrestricted" | "terrain-point" | ((this: void, target: unit, from: Point2, to: Point2) => boolean);
-  /** Maximum gap between terrain samples in world units; default 32. Moves over 4096 samples are blocked. */
-  sampleStep?: number;
-}
-
-/** Sets x/y directly; never pauses/unpauses, changes orders, or changes unit pathing flags. */
-export class WarcraftKnockbackPort implements KnockbackPort<unit> {
-  private readonly options: WarcraftKnockbackOptions;
-  constructor(options: WarcraftKnockbackOptions) {
-    positive(options.sampleStep ?? 32, "sampleStep");
-    this.options = { ...options };
-  }
-
-  valid(target: unit): boolean { return living(target); }
-  position(target: unit): Point2 { return { x: GetUnitX(target), y: GetUnitY(target) }; }
-
-  move(target: unit, to: Point2): boolean {
-    point2(to);
-    const from = this.position(target);
-    const policy = this.options.pathing;
-    if (typeof policy === "function") {
-      if (!policy(target, from, to)) return false;
-    } else if (policy === "terrain-point") {
-      const dx = to.x - from.x;
-      const dy = to.y - from.y;
-      const samples = Math.max(1, Math.ceil(Math.sqrt(dx * dx + dy * dy) / (this.options.sampleStep ?? 32)));
-      if (samples > 4096) return false;
-      for (let sample = 1; sample <= samples; sample++) {
-        if (IsTerrainPathable(from.x + dx * sample / samples, from.y + dy * sample / samples, PATHING_TYPE_WALKABILITY)) return false;
-      }
-    }
-    SetUnitX(target, to.x);
-    SetUnitY(target, to.y);
-    return true;
   }
 }

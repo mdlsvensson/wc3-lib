@@ -20,10 +20,12 @@ import { trackWarcraftBuffTargets } from "@mdlsvensson/wc3-lib/buffs/warcraft-bu
 import { createWarcraftDummies } from "@mdlsvensson/wc3-lib/dummy/warcraft-dummy";
 import { createWarcraftDamage, isLethal, type WarcraftDamageSystem } from "@mdlsvensson/wc3-lib/damage";
 import { DamageSystem, type DamageEvent } from "@mdlsvensson/wc3-lib/damage/system";
-import { MissileSystem, type CollisionTarget, type Missile, type MissileOptions } from "@mdlsvensson/wc3-lib/physics/missile";
-import { KnockbackSystem, knockbackVelocity, type KnockbackEnd } from "@mdlsvensson/wc3-lib/physics/knockback";
+import { MissileSystem, type CollisionTarget, type Missile, type MissileOptions } from "@mdlsvensson/wc3-lib/physics/missile/system";
+import { KnockbackSystem, knockbackVelocity, type KnockbackEnd } from "@mdlsvensson/wc3-lib/physics/knockback/system";
 import { turnToward } from "@mdlsvensson/wc3-lib/physics/geometry";
-import { WarcraftKnockbackPort, WarcraftMissilePort, WarcraftMissileVisual, WarcraftTerrain } from "@mdlsvensson/wc3-lib/physics/warcraft";
+import { WarcraftKnockbackPort } from "@mdlsvensson/wc3-lib/physics/knockback/warcraft";
+import { WarcraftMissilePort, WarcraftMissileVisual } from "@mdlsvensson/wc3-lib/physics/missile/warcraft";
+import { WarcraftTerrain } from "@mdlsvensson/wc3-lib/physics/warcraft-terrain";
 import { SaveCodec, type SaveData, type SaveSchema } from "@mdlsvensson/wc3-lib/persistence/codec";
 import { hexEncode, integerText } from "@mdlsvensson/wc3-lib/persistence/format";
 import { createWarcraftPreloadPort, PreloadLocalStore } from "@mdlsvensson/wc3-lib/persistence/local-file";
