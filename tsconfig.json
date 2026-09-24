@@ -1,0 +1,65 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "allowJs": false,
+    "outDir": "dist/out",
+    "baseUrl": "./",
+    "forceConsistentCasingInFileNames": true,
+    "target": "ESNext",
+    "lib": [
+      "ESNext"
+    ],
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "paths": {
+      "@mdlsvensson/wc3-lib/*": [
+        "./*"
+      ]
+    },
+    "plugins": [
+      {
+        "transform": "war3-transformer"
+      }
+    ],
+    "types": [
+      "@typescript-to-lua/language-extensions",
+      "lua-types/core/coroutine",
+      "lua-types/core/global",
+      "lua-types/core/math",
+      "lua-types/core/metatable",
+      "lua-types/core/modules",
+      "lua-types/core/string",
+      "lua-types/core/table",
+      "lua-types/core/os",
+      "lua-types/special/5.3",
+      "war3-types-strict/1.33.0",
+      "war3-transformer/types"
+    ],
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": [
+    "core",
+    "buffs",
+    "dummy",
+    "damage",
+    "physics",
+    "persistence",
+    "time",
+    "testbed",
+    "tools/lua-harness.ts"
+  ],
+  "exclude": [],
+  "tstl": {
+    "luaTarget": "5.3",
+    "noHeader": true,
+    "luaLibImport": "require",
+    "noImplicitSelf": true,
+    "luaBundle": "dist/testbed.lua",
+    "luaBundleEntry": "./testbed/main.ts",
+    "sourceMapTraceback": false,
+    "noResolvePaths": [
+      "typescript",
+      "typescript-to-lua"
+    ]
+  }
+}

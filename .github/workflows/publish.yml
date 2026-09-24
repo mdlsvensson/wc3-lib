@@ -1,0 +1,30 @@
+name: Publish
+
+# Publishing from GitHub Actions with an OIDC token gives each JSR version
+# provenance (a Sigstore transparency log entry). Bump "version" in deno.json,
+# then push a matching tag: git tag v0.1.1 && git push origin v0.1.1
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # OIDC token for JSR: no secret, and it enables provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno install
+      - run: deno task test
+      - run: deno task typecheck
+      - run: deno task lint
+      - run: deno task check:docs
+      - run: deno task test:lua
+      # --allow-slow-types: JSR can't see Warcraft's global types (see README "Developing").
+      - run: deno publish --allow-slow-types

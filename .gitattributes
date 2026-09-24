@@ -1,0 +1,2 @@
+# Publish and check out with LF on every platform (JSR serves files exactly as published).
+* text=auto eol=lf
